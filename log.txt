@@ -45,3 +45,6 @@ POST /api/listDoctor 181ms
 POST /api/listUser 157ms 
 POST /api/listPatient 159ms 
 POST /api/listDoctor 151ms 
+POST /api/listUser 157ms 
+POST /api/listPatient 201ms 
+POST /api/listDoctor 146ms 
