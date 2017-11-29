@@ -24,6 +24,8 @@ const urls = {
     'listUpFile': {},
     'delFile': {},
     'listUser': {},
+    'listDoctor': {},
+    'listPatient': {},
     'listDepartment': {},
     'updateDepartment': {},
     'deleteDepartment': {},

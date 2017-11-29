@@ -1,7 +1,7 @@
 <template>
     <div class="add-article">
         <el-form ref="form" :model="data" :rules="rules" label-width="80px">
-            <el-form-item label="用户帐号" prop="user_name">
+            <!-- <el-form-item label="用户帐号" prop="user_name">
                 <el-input :disabled="data.id > 0" v-model="data.user_name"></el-input>
             </el-form-item>
             <el-form-item label="用户密码" prop="pass_word">
@@ -23,7 +23,7 @@
             <el-form-item style="text-align: right">
                 <el-button @click="backList">返回列表</el-button>
                 <el-button type="primary" :disabled="grade.updateUser||loading" @click="saveUser">保存用户</el-button>
-            </el-form-item>
+            </el-form-item> -->
         </el-form>
     </div>
 </template>

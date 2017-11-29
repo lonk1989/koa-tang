@@ -433,6 +433,56 @@ async function listUser(ctx) {
     };
 }
 
+//医生列表
+async function listDoctor(ctx) {
+    let data = ctx.request.body;
+    const arr = [];
+    let querying = '';
+    if(data.name){
+        querying += " and name like ?";
+        arr.push('%' + data.name + '%');
+    }
+    if(data.phone){
+        querying += " and phone like ?";
+        arr.push('%' + data.phone + '%');
+    }
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [list] = await connection.execute("SELECT * FROM `doctor`"+querying.replace('and','where'), arr);
+    await connection.end();
+    list.forEach(obj=>{
+        obj.phone = '****'+obj.phone.slice(4);//过滤手机号码
+    });
+    ctx.body = {
+        success: true,
+        data:{data:list}
+    };
+}
+
+//患者列表
+async function listPatient(ctx) {
+    let data = ctx.request.body;
+    const arr = [];
+    let querying = '';
+    if(data.name){
+        querying += " and name like ?";
+        arr.push('%' + data.name + '%');
+    }
+    if(data.phone){
+        querying += " and phone like ?";
+        arr.push('%' + data.phone + '%');
+    }
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [list] = await connection.execute("SELECT * FROM `doctor`"+querying.replace('and','where'), arr);
+    await connection.end();
+    list.forEach(obj=>{
+        obj.phone = '****'+obj.phone.slice(4);//过滤手机号码
+    });
+    ctx.body = {
+        success: true,
+        data:{data:list}
+    };
+}
+
 
 //审核用户
 async function passedUser(ctx){
@@ -1180,6 +1230,8 @@ export default {
     deleteSort,
     batchDelSort,
     listUser,
+    listDoctor,
+    listPatient,
     passedUser,
     deleteUser,
     getUserById,

@@ -2,7 +2,7 @@
 export default {
     //数据库配置
     mysqlDB : {
-		host:'localhost',
+		host:'118.31.12.161',
         user: 'root',
         password:'123456',
         database: 'tang'

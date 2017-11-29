@@ -12,6 +12,10 @@ import Medicine from 'page/BaseInfo/Medicine.vue'
 import UpFileList from 'page/UpFile/list.vue'
 import userList from 'page/User/list.vue'
 import userAdd from 'page/User/add.vue'
+import doctorList from 'page/Doctor/list.vue'
+import doctorAdd from 'page/Doctor/add.vue'
+import patientList from 'page/Patient/list.vue'
+import patientAdd from 'page/Patient/add.vue'
 //todo 记录
 /*
 *
@@ -91,7 +95,7 @@ export default {
                     verify:true,
                     grade:4,
                     title:'科室列表',
-                    icon:'fa fa-newspaper-o'
+                    icon:'fa fa-clone'
                 },
                 component: Department
             },{
@@ -168,20 +172,20 @@ export default {
                 path: 'list',
                 meta:{
                     verify:true,
-                    grade:common.page_grade.userList,
+                    grade:4,
                     title: '医生列表',
                     icon:'fa fa-address-card-o'
                 },
-                component: userList
+                component: doctorList
             },{
                 path: 'add',
                 meta:{
                     verify:true,
-                    grade:common.page_grade.updateUser,
+                    grade:4,
                     title: '添加医生',
                     icon:'fa fa-user-plus'
                 },
-                component: userAdd
+                component: doctorAdd
             },{
                 path: 'edit/:id',
                 meta:{
@@ -189,7 +193,7 @@ export default {
                     title: '编辑医生',
                     icon:'fa fa-user-times'
                 },
-                component: userAdd
+                component: doctorAdd
             }]
         },{
             path: '/patient',
@@ -204,20 +208,20 @@ export default {
                 path: 'list',
                 meta:{
                     verify:true,
-                    grade:common.page_grade.userList,
+                    grade:4,
                     title: '患者列表',
                     icon:'fa fa-address-card-o'
                 },
-                component: userList
+                component: patientList
             },{
                 path: 'add',
                 meta:{
                     verify:true,
-                    grade:common.page_grade.updateUser,
+                    grade:4,
                     title: '添加患者',
                     icon:'fa fa-user-plus'
                 },
-                component: userAdd
+                component: patientAdd
             },{
                 path: 'edit/:id',
                 meta:{
@@ -225,7 +229,7 @@ export default {
                     title: '编辑患者',
                     icon:'fa fa-user-times'
                 },
-                component: userAdd
+                component: patientAdd
             }]
         },{
             path: '/upfile',
