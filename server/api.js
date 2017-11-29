@@ -38,6 +38,371 @@ function sendEmail(email, title, body) {
     })
 }
 
+//科室列表
+async function listDepartment(ctx) {
+    let data = ctx.request.body;
+    const arr = [];
+    let querying = '';
+    if(data.name){
+        querying += " and name like ?";
+        arr.push('%' + data.name + '%');
+    }
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [list] = await connection.execute("SELECT * FROM `department` order by `sort`"+querying.replace('and','where'), arr);
+    await connection.end();
+    ctx.body = {
+        success: true,
+        data:{data:list}
+    };
+}
+//保存科室
+async function updateDepartment(ctx) {
+    let data = ctx.request.body;
+    let msg,arr = [];
+    const obj = {
+        name:'科室名称',
+        sort:''
+    };
+    const array = Object.getOwnPropertyNames(obj);
+    array.forEach(key=>{
+        if(obj[key]!=='' && data[key]==='' &&!msg){
+            msg = obj[key]+'不能为空！';
+        }
+        arr.push(data[key]);
+    });
+    if(!msg){
+        let id = data.id >> 0;
+        const connection = await mysql.createConnection(config.mysqlDB);
+        if(id){
+            arr.push(id);
+            const [result] = await connection.execute(`UPDATE department SET ${array.map(k=>k+'=?').join(',')} where id=?`, arr);
+            msg = result.affectedRows === 1 ? '' : '修改失败';
+        }else{
+            //先检查是否占用帐号
+            const [rows] = await connection.execute('SELECT name FROM `department` where `name`=?', [data.name]);
+            if(rows.length > 0) {
+                msg = '名称已经被占用！';
+            }else{
+                const [result] = await connection.execute(`INSERT INTO department (${array.join(',')}) VALUES (${array.map((()=>'?')).join(',')})`, arr);
+                msg = result.affectedRows === 1 ? '' : '添加失败';
+                data.id = result.insertId
+            }
+        }
+        await connection.end();
+    }
+    ctx.body = {
+        success: !msg,
+        message: msg,
+        data: {
+            data
+        }
+    }
+}
+//删除科室
+async function deleteDepartment(ctx) {
+    const data = ctx.request.body;
+    let id = data.id >> 0;
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [result] = await connection.execute('DELETE from `department` where id=?',[id]);
+    await connection.end();
+    ctx.body = {
+        success: result.affectedRows === 1,
+        message: result.affectedRows === 1 ? '' : `id:${id}删除失败！`,
+        data: {}
+    }
+}
+//批量删除科室
+async function batchDelDepartment(ctx) {
+    const data = ctx.request.body;
+    let result = {};
+    if(/^\d+(,\d+)*$/.test(data.ids)){
+        const connection = await mysql.createConnection(config.mysqlDB);
+        const [list] = await connection.execute('DELETE from `department` where id in (' + data.ids + ')');
+        result = list;
+        await connection.end();
+    }
+    ctx.body = {
+        success: result.affectedRows > 0,
+        message: result.affectedRows > 0 ? '' : `ids:${data.ids}删除失败！`,
+        data: {}
+    }
+}
+
+//医院列表
+async function listHospital(ctx) {
+    let data = ctx.request.body;
+    const arr = [];
+    let querying = '';
+    if(data.name){
+        querying += " and name like ?";
+        arr.push('%' + data.name + '%');
+    }
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [list] = await connection.execute("SELECT * FROM `hospital` order by `sort`"+querying.replace('and','where'), arr);
+    await connection.end();
+    ctx.body = {
+        success: true,
+        data:{data:list}
+    };
+}
+//保存医院
+async function updateHospital(ctx) {
+    let data = ctx.request.body;
+    let msg,arr = [];
+    const obj = {
+        name:'医院名称',
+        rank:'',
+        sort:''
+    };
+    const array = Object.getOwnPropertyNames(obj);
+    array.forEach(key=>{
+        if(obj[key]!=='' && data[key]==='' &&!msg){
+            msg = obj[key]+'不能为空！';
+        }
+        arr.push(data[key]);
+    });
+    if(!msg){
+        let id = data.id >> 0;
+        const connection = await mysql.createConnection(config.mysqlDB);
+        if(id){
+            arr.push(id);
+            const [result] = await connection.execute(`UPDATE hospital SET ${array.map(k=>k+'=?').join(',')} where id=?`, arr);
+            msg = result.affectedRows === 1 ? '' : '修改失败';
+        }else{
+            //先检查是否占用帐号
+            const [rows] = await connection.execute('SELECT name FROM `hospital` where `name`=?', [data.name]);
+            if(rows.length > 0) {
+                msg = '名称已经被占用！';
+            }else{
+                const [result] = await connection.execute(`INSERT INTO hospital (${array.join(',')}) VALUES (${array.map((()=>'?')).join(',')})`, arr);
+                msg = result.affectedRows === 1 ? '' : '添加失败';
+                data.id = result.insertId
+            }
+        }
+        await connection.end();
+    }
+    ctx.body = {
+        success: !msg,
+        message: msg,
+        data: {
+            data
+        }
+    }
+}
+//删除医院
+async function deleteHospital(ctx) {
+    const data = ctx.request.body;
+    let id = data.id >> 0;
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [result] = await connection.execute('DELETE from `hospital` where id=?',[id]);
+    await connection.end();
+    ctx.body = {
+        success: result.affectedRows === 1,
+        message: result.affectedRows === 1 ? '' : `id:${id}删除失败！`,
+        data: {}
+    }
+}
+//批量删除医院
+async function batchDelHospital(ctx) {
+    const data = ctx.request.body;
+    let result = {};
+    if(/^\d+(,\d+)*$/.test(data.ids)){
+        const connection = await mysql.createConnection(config.mysqlDB);
+        const [list] = await connection.execute('DELETE from `hospital` where id in (' + data.ids + ')');
+        result = list;
+        await connection.end();
+    }
+    ctx.body = {
+        success: result.affectedRows > 0,
+        message: result.affectedRows > 0 ? '' : `ids:${data.ids}删除失败！`,
+        data: {}
+    }
+}
+
+
+//不适症状列表
+async function listSickness(ctx) {
+    let data = ctx.request.body;
+    const arr = [];
+    let querying = '';
+    if(data.name){
+        querying += " and name like ?";
+        arr.push('%' + data.name + '%');
+    }
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [list] = await connection.execute("SELECT * FROM `sickness` order by `sort`"+querying.replace('and','where'), arr);
+    await connection.end();
+    ctx.body = {
+        success: true,
+        data:{data:list}
+    };
+}
+//保存不适症状
+async function updateSickness(ctx) {
+    let data = ctx.request.body;
+    let msg,arr = [];
+    const obj = {
+        name:'不适症状名称',
+        department_id: '所属科室',
+        sort:''
+    };
+    const array = Object.getOwnPropertyNames(obj);
+    array.forEach(key=>{
+        if(obj[key]!=='' && data[key]==='' &&!msg){
+            msg = obj[key]+'不能为空！';
+        }
+        arr.push(data[key]);
+    });
+    if(!msg){
+        let id = data.id >> 0;
+        const connection = await mysql.createConnection(config.mysqlDB);
+        if(id){
+            arr.push(id);
+            const [result] = await connection.execute(`UPDATE sickness SET ${array.map(k=>k+'=?').join(',')} where id=?`, arr);
+            msg = result.affectedRows === 1 ? '' : '修改失败';
+        }else{
+            //先检查是否占用帐号
+            const [rows] = await connection.execute('SELECT name FROM `sickness` where `name`=?', [data.name]);
+            if(rows.length > 0) {
+                msg = '名称已经被占用！';
+            }else{
+                const [result] = await connection.execute(`INSERT INTO sickness (${array.join(',')}) VALUES (${array.map((()=>'?')).join(',')})`, arr);
+                msg = result.affectedRows === 1 ? '' : '添加失败';
+                data.id = result.insertId
+            }
+        }
+        await connection.end();
+    }
+    ctx.body = {
+        success: !msg,
+        message: msg,
+        data: {
+            data
+        }
+    }
+}
+//删除不适症状
+async function deleteSickness(ctx) {
+    const data = ctx.request.body;
+    let id = data.id >> 0;
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [result] = await connection.execute('DELETE from `sickness` where id=?',[id]);
+    await connection.end();
+    ctx.body = {
+        success: result.affectedRows === 1,
+        message: result.affectedRows === 1 ? '' : `id:${id}删除失败！`,
+        data: {}
+    }
+}
+//批量删除不适症状
+async function batchDelSickness(ctx) {
+    const data = ctx.request.body;
+    let result = {};
+    if(/^\d+(,\d+)*$/.test(data.ids)){
+        const connection = await mysql.createConnection(config.mysqlDB);
+        const [list] = await connection.execute('DELETE from `sickness` where id in (' + data.ids + ')');
+        result = list;
+        await connection.end();
+    }
+    ctx.body = {
+        success: result.affectedRows > 0,
+        message: result.affectedRows > 0 ? '' : `ids:${data.ids}删除失败！`,
+        data: {}
+    }
+}
+
+//药品列表
+async function listMedicine(ctx) {
+    let data = ctx.request.body;
+    const arr = [];
+    let querying = '';
+    if(data.name){
+        querying += " and name like ?";
+        arr.push('%' + data.name + '%');
+    }
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [list] = await connection.execute("SELECT * FROM `medicine` order by `sort`"+querying.replace('and','where'), arr);
+    await connection.end();
+    ctx.body = {
+        success: true,
+        data:{data:list}
+    };
+}
+//保存药品
+async function updateMedicine(ctx) {
+    let data = ctx.request.body;
+    let msg,arr = [];
+    const obj = {
+        name:'药品名称',
+        unit:'单位',
+        price:'价格',
+        sort:''
+    };
+    const array = Object.getOwnPropertyNames(obj);
+    array.forEach(key=>{
+        if(obj[key]!=='' && data[key]==='' &&!msg){
+            msg = obj[key]+'不能为空！';
+        }
+        arr.push(data[key]);
+    });
+    if(!msg){
+        let id = data.id >> 0;
+        const connection = await mysql.createConnection(config.mysqlDB);
+        if(id){
+            arr.push(id);
+            const [result] = await connection.execute(`UPDATE medicine SET ${array.map(k=>k+'=?').join(',')} where id=?`, arr);
+            msg = result.affectedRows === 1 ? '' : '修改失败';
+        }else{
+            //先检查是否占用帐号
+            const [rows] = await connection.execute('SELECT name FROM `medicine` where `name`=?', [data.name]);
+            if(rows.length > 0) {
+                msg = '名称已经被占用！';
+            }else{
+                const [result] = await connection.execute(`INSERT INTO medicine (${array.join(',')}) VALUES (${array.map((()=>'?')).join(',')})`, arr);
+                msg = result.affectedRows === 1 ? '' : '添加失败';
+                data.id = result.insertId
+            }
+        }
+        await connection.end();
+    }
+    ctx.body = {
+        success: !msg,
+        message: msg,
+        data: {
+            data
+        }
+    }
+}
+//删除药品
+async function deleteMedicine(ctx) {
+    const data = ctx.request.body;
+    let id = data.id >> 0;
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [result] = await connection.execute('DELETE from `medicine` where id=?',[id]);
+    await connection.end();
+    ctx.body = {
+        success: result.affectedRows === 1,
+        message: result.affectedRows === 1 ? '' : `id:${id}删除失败！`,
+        data: {}
+    }
+}
+//批量删除药品
+async function batchDelMedicine(ctx) {
+    const data = ctx.request.body;
+    let result = {};
+    if(/^\d+(,\d+)*$/.test(data.ids)){
+        const connection = await mysql.createConnection(config.mysqlDB);
+        const [list] = await connection.execute('DELETE from `medicine` where id in (' + data.ids + ')');
+        result = list;
+        await connection.end();
+    }
+    ctx.body = {
+        success: result.affectedRows > 0,
+        message: result.affectedRows > 0 ? '' : `ids:${data.ids}删除失败！`,
+        data: {}
+    }
+}
+
 //用户列表
 async function listUser(ctx) {
     let data = ctx.request.body;
@@ -67,6 +432,8 @@ async function listUser(ctx) {
         data:{data:list}
     };
 }
+
+
 //审核用户
 async function passedUser(ctx){
     let data = ctx.request.body;
@@ -778,6 +1145,22 @@ async function delFile(ctx) {
 }
 
 export default {
+    listDepartment,
+    updateDepartment,
+    deleteDepartment,
+    batchDelDepartment,
+    listHospital,
+    updateHospital,
+    deleteHospital,
+    batchDelHospital,
+    listSickness,
+    updateSickness,
+    deleteSickness,
+    batchDelSickness,
+    listMedicine,
+    updateMedicine,
+    deleteMedicine,
+    batchDelMedicine,
     saveUpFile,
     listUpFile,
     delFile,

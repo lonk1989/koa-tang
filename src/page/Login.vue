@@ -14,8 +14,8 @@
                     </el-form-item>
                 </el-form>
                 <el-button type="primary" @click="login" :disabled="loading">登录</el-button>
-                <el-button @click="openReg('register')" :disabled="loading">注册</el-button>
-                <el-button type="text" @click="openReg('retrieve')">忘记密码</el-button>
+                <!-- <el-button @click="openReg('register')" :disabled="loading">注册</el-button>
+                <el-button type="text" @click="openReg('retrieve')">忘记密码</el-button> -->
             </el-row>
         </el-row>
 

@@ -5,8 +5,10 @@ import Home from 'page/Home.vue'
 import ArticleList from 'page/Article/list.vue'
 import ArticleSort from 'page/Article/sort.vue'
 import ArticleAdd from 'page/Article/add.vue'
-import DepartmentList from 'page/Department/list.vue'
-import DepartmentAdd from 'page/Department/add.vue'
+import Department from 'page/BaseInfo/Department.vue'
+import Hospital from 'page/BaseInfo/Hospital.vue'
+import Sickness from 'page/BaseInfo/Sickness.vue'
+import Medicine from 'page/BaseInfo/Medicine.vue'
 import UpFileList from 'page/UpFile/list.vue'
 import userList from 'page/User/list.vue'
 import userAdd from 'page/User/add.vue'
@@ -75,39 +77,47 @@ export default {
                 component: ArticleAdd
             }]
         },{
-            path: '/deparment',
+            path: '/base-info',
             meta:{
                 verify:true,
-                title:'科室管理',
+                title:'基础信息',
                 icon:'fa fa-file-text-o'
             },
             component: Home,
-            redirect:'/deparment/list',
+            redirect:'/base-info/department',
             children: [{
-                path: 'list',
+                path: 'department',
                 meta:{
                     verify:true,
-                    grade:common.page_grade.listArticle,
-                    title: '科室列表',
+                    grade:4,
+                    title:'科室列表',
                     icon:'fa fa-newspaper-o'
                 },
-                component: DepartmentList
+                component: Department
             },{
-                path: 'add',
+                path: 'hospital',
                 meta:{
                     verify:true,
-                    title: '添加科室',
+                    title: '医院列表',
                     icon:'fa fa-clone'
                 },
-                component: DepartmentAdd
+                component: Hospital
             },{
-                path: 'edit/:id',
+                path: 'sickness',
                 meta:{
                     verify:true,
-                    title: '编辑科室',
+                    title: '不适症状',
                     icon:'fa fa-clone'
                 },
-                component: DepartmentAdd
+                component: Sickness
+            },{
+                path: 'medicine',
+                meta:{
+                    verify:true,
+                    title: '药品列表',
+                    icon:'fa fa-clone'
+                },
+                component: Medicine
             }]
         },{
             path: '/user',
@@ -141,6 +151,78 @@ export default {
                 meta:{
                     verify:true,
                     title: '编辑用户',
+                    icon:'fa fa-user-times'
+                },
+                component: userAdd
+            }]
+        },{
+            path: '/doctor',
+            meta:{
+                verify:true,
+                title:'医生管理',
+                icon:'fa fa-user-o'
+            },
+            redirect:'/doctor/list',
+            component: Home,
+            children: [{
+                path: 'list',
+                meta:{
+                    verify:true,
+                    grade:common.page_grade.userList,
+                    title: '医生列表',
+                    icon:'fa fa-address-card-o'
+                },
+                component: userList
+            },{
+                path: 'add',
+                meta:{
+                    verify:true,
+                    grade:common.page_grade.updateUser,
+                    title: '添加医生',
+                    icon:'fa fa-user-plus'
+                },
+                component: userAdd
+            },{
+                path: 'edit/:id',
+                meta:{
+                    verify:true,
+                    title: '编辑医生',
+                    icon:'fa fa-user-times'
+                },
+                component: userAdd
+            }]
+        },{
+            path: '/patient',
+            meta:{
+                verify:true,
+                title:'患者管理',
+                icon:'fa fa-user-o'
+            },
+            redirect:'/patient/list',
+            component: Home,
+            children: [{
+                path: 'list',
+                meta:{
+                    verify:true,
+                    grade:common.page_grade.userList,
+                    title: '患者列表',
+                    icon:'fa fa-address-card-o'
+                },
+                component: userList
+            },{
+                path: 'add',
+                meta:{
+                    verify:true,
+                    grade:common.page_grade.updateUser,
+                    title: '添加患者',
+                    icon:'fa fa-user-plus'
+                },
+                component: userAdd
+            },{
+                path: 'edit/:id',
+                meta:{
+                    verify:true,
+                    title: '编辑患者',
                     icon:'fa fa-user-times'
                 },
                 component: userAdd
