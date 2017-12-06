@@ -244,6 +244,7 @@ async function updateSickness(ctx) {
     const obj = {
         name:'不适症状名称',
         department_id: '所属科室',
+        icon:'',
         sort:''
     };
     const array = Object.getOwnPropertyNames(obj);
