@@ -429,6 +429,7 @@ async function updateMedicine(ctx) {
         medicine_type_id: '药品类别',
         unit:'单位',
         price:'价格',
+        spec:'',
         sort:''
     };
     const array = Object.getOwnPropertyNames(obj);

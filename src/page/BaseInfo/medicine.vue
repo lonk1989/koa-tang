@@ -39,6 +39,9 @@
                 <el-form-item label="单价（元）(例：10.00)" prop="price">
                     <el-input v-model="form.price"></el-input>
                 </el-form-item>
+                <el-form-item label="规格(例：6g*10袋)" prop="spec">
+                    <el-input v-model="form.spec"></el-input>
+                </el-form-item>
                 <el-form-item label="排序" prop="sort">
                     <el-input v-model="form.sort" type="number"></el-input>
                 </el-form-item>
@@ -72,6 +75,7 @@
                     medicine_type_id: '',
                     unit: '',
                     price: '',
+                    spec: '',
                     sort: 0,
                 },
                 rules: {
