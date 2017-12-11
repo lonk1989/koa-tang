@@ -26,19 +26,6 @@
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="药品类别" prop="medicine_type_id">
-                    <el-select v-model="form.medicine_type_id" ref="select"
-                               style="width: 100%">
-                        <el-option v-for="(item,key) in medicine_type_data" :key="key" :label="item" :value="key">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="单位(例：g)" prop="unit">
-                    <el-input v-model="form.unit"></el-input>
-                </el-form-item>
-                <el-form-item label="单价（元）(例：10.00)" prop="price">
-                    <el-input v-model="form.price"></el-input>
-                </el-form-item>
                 <el-form-item label="排序" prop="sort">
                     <el-input v-model="form.sort" type="number"></el-input>
                 </el-form-item>
@@ -54,7 +41,7 @@
     import {ajax,storage} from 'utils';
     import common from 'common';
     module.exports = {
-        name: 'Medicine',
+        name: 'MedicineType',
         data() {
             return {
                 page_grade:common.page_grade,
@@ -65,20 +52,13 @@
                 loading: false,
                 filterText: '',
                 parent_data: null,
-                medicine_type_data: [],
                 form: {
                     id: 0,
                     name: '',
-                    medicine_type_id: '',
-                    unit: '',
-                    price: '',
                     sort: 0,
                 },
                 rules: {
-                    name: {required: true, trigger: 'change'},
-                    medicine_type_id: {required: true, trigger: 'change'},
-                    unit: {required: true, trigger: 'change'},
-                    price: {required: true, trigger: 'change'}
+                    name: {required: true, trigger: 'change'}
                 },
                 data: [],
                 defaultProps: {
@@ -95,18 +75,6 @@
         },
         mounted(){
             ajax.call(this, '/listMedicineType', {}, (data, err) => {
-                if (!err) {
-                    let arr = data.data;
-                    let obj = {}
-                    arr.map((o,i) => {
-                        obj[o.id.toString()] = o.name
-                    })
-                    console.log(obj)
-                    this.medicine_type_data = obj;
-                }
-            })
-
-            ajax.call(this, '/listMedicine', {}, (data, err) => {
                 if (!err) {
                     this.data = data.data;
                 }
@@ -126,7 +94,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        ajax.call(this, '/batchDelMedicine', {ids:v.join(',')}, (d, err) => {
+                        ajax.call(this, '/batchDelMedicineType', {ids:v.join(',')}, (d, err) => {
                             if (!err) {
                                 let a = (obj)=>{
                                     let c = 0
@@ -148,7 +116,7 @@
                     if (v) {
                         this.visible = true;
                         this.loading = true;
-                        ajax.call(this, '/updateMedicine', this.form, (data, err) => {
+                        ajax.call(this, '/updateMedicineType', this.form, (data, err) => {
                             this.visible = false;
                             this.loading = false;
                             if (!err) {
@@ -188,7 +156,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        ajax.call(this, '/deleteMedicine', {id: data.id}, (d, err) => {
+                        ajax.call(this, '/deleteMedicineType', {id: data.id}, (d, err) => {
                             if (!err) {
                                 store.remove(data);
                             }
@@ -222,7 +190,7 @@
                         }
                     })
                 };
-                return h('span',[h('span', [h('span'), [node.label, h('span', {style: {color: '#999',marginLeft: '10px'}}, node.data.price + '元')]]),h('span', {style: {float: 'right',margin: '-2px 10px'}}, [but('warning', 'edit'), but('danger', 'delete')])]);
+                return h('span',[h('span', [h('span'), [node.label]]),h('span', {style: {float: 'right',margin: '-2px 10px'}}, [but('warning', 'edit'), but('danger', 'delete')])]);
             }
         },
         mixins:[common.mixin],

@@ -128,6 +128,97 @@ async function batchDelDepartment(ctx) {
     }
 }
 
+
+//科室列表
+async function listMedicineType(ctx) {
+    let data = ctx.request.body;
+    const arr = [];
+    let querying = '';
+    if(data.name){
+        querying += " and name like ?";
+        arr.push('%' + data.name + '%');
+    }
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [list] = await connection.execute("SELECT * FROM `medicine_type` order by `sort`"+querying.replace('and','where'), arr);
+    await connection.end();
+    ctx.body = {
+        success: true,
+        data:{data:list}
+    };
+}
+//保存科室
+async function updateMedicineType(ctx) {
+    let data = ctx.request.body;
+    let msg,arr = [];
+    const obj = {
+        name:'科室名称',
+        sort:''
+    };
+    const array = Object.getOwnPropertyNames(obj);
+    array.forEach(key=>{
+        if(obj[key]!=='' && data[key]==='' &&!msg){
+            msg = obj[key]+'不能为空！';
+        }
+        arr.push(data[key]);
+    });
+    if(!msg){
+        let id = data.id >> 0;
+        const connection = await mysql.createConnection(config.mysqlDB);
+        if(id){
+            arr.push(id);
+            const [result] = await connection.execute(`UPDATE medicine_type SET ${array.map(k=>k+'=?').join(',')} where id=?`, arr);
+            msg = result.affectedRows === 1 ? '' : '修改失败';
+        }else{
+            //先检查是否占用帐号
+            const [rows] = await connection.execute('SELECT name FROM `medicine_type` where `name`=?', [data.name]);
+            if(rows.length > 0) {
+                msg = '名称已经被占用！';
+            }else{
+                const [result] = await connection.execute(`INSERT INTO medicine_type (${array.join(',')}) VALUES (${array.map((()=>'?')).join(',')})`, arr);
+                msg = result.affectedRows === 1 ? '' : '添加失败';
+                data.id = result.insertId
+            }
+        }
+        await connection.end();
+    }
+    ctx.body = {
+        success: !msg,
+        message: msg,
+        data: {
+            data
+        }
+    }
+}
+//删除科室
+async function deleteMedicineType(ctx) {
+    const data = ctx.request.body;
+    let id = data.id >> 0;
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [result] = await connection.execute('DELETE from `medicine_type` where id=?',[id]);
+    await connection.end();
+    ctx.body = {
+        success: result.affectedRows === 1,
+        message: result.affectedRows === 1 ? '' : `id:${id}删除失败！`,
+        data: {}
+    }
+}
+//批量删除科室
+async function batchDelMedicineType(ctx) {
+    const data = ctx.request.body;
+    let result = {};
+    if(/^\d+(,\d+)*$/.test(data.ids)){
+        const connection = await mysql.createConnection(config.mysqlDB);
+        const [list] = await connection.execute('DELETE from `medicine_type` where id in (' + data.ids + ')');
+        result = list;
+        await connection.end();
+    }
+    ctx.body = {
+        success: result.affectedRows > 0,
+        message: result.affectedRows > 0 ? '' : `ids:${data.ids}删除失败！`,
+        data: {}
+    }
+}
+
 //医院列表
 async function listHospital(ctx) {
     let data = ctx.request.body;
@@ -335,6 +426,7 @@ async function updateMedicine(ctx) {
     let msg,arr = [];
     const obj = {
         name:'药品名称',
+        medicine_type_id: '药品类别',
         unit:'单位',
         price:'价格',
         sort:''
@@ -482,6 +574,43 @@ async function listPatient(ctx) {
         success: true,
         data:{data:list}
     };
+}
+
+async function regPatient(ctx) {
+    let data = ctx.request.body
+    let msg,arr = [];
+    const obj = {
+        username:'用户名',
+        password:'用户密码'
+    };
+    const array = Object.getOwnPropertyNames(obj);
+    array.forEach(key=>{
+        if(data[key]==='' && key !=='user_pic' &&!msg){
+            msg = obj[key]+'不能为空！';
+        }
+        arr.push(data[key]);
+    });
+    if(!msg){
+        let id = data.id >> 0;
+        const connection = await mysql.createConnection(config.mysqlDB);
+        array.push('createtime');
+        arr.push(new Date().toLocaleString());
+        arr[1] = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));//加密密码
+        //先检查是否占用帐号
+        const [rows] = await connection.execute('SELECT phone FROM `patient` where `username`=?', [data.username]);
+        if(rows.length > 0) {
+            msg = '该手机号已经注册了';
+        }else{
+            const [result] = await connection.execute(`INSERT INTO patient (${array.join(',')}) VALUES (${array.map((()=>'?')).join(',')})`, arr);
+            msg = result.affectedRows === 1 ? '' : '添加用户失败';
+        }
+        await connection.end();
+    }
+    ctx.body = {
+        success: !msg,
+        message: msg,
+        data: {}
+    }
 }
 
 
@@ -1200,6 +1329,10 @@ export default {
     updateDepartment,
     deleteDepartment,
     batchDelDepartment,
+    listMedicineType,
+    updateMedicineType,
+    deleteMedicineType,
+    batchDelMedicineType,
     listHospital,
     updateHospital,
     deleteHospital,

@@ -45,8 +45,8 @@
                 table_data: {
                     columns: [
                         {"key": "phone", "name": "医生手机号", width: 150},
-                        {"key": "name", "name": "医生姓名", Width: 150},
-                        {"key": "hospital", "name": "医生所属医院", width: 150},
+                        {"key": "name", "name": "医生姓名", width: 150},
+                        {"key": "hospital", "name": "医生所属医院"},
                         {"key": "operations", "name": "操作", width: 135}
                     ],
                     data: []

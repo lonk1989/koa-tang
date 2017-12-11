@@ -33,7 +33,7 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="图标" prop="icon">
+                <el-form-item label="图标." prop="icon">
                     <el-input v-model="form.icon"></el-input> <up-file ref="upload" :upload="{disabled:false}" @successUpload="successUpload"></up-file> <el-button @click="upImg">上传图片</el-button>
                 </el-form-item>
                 <el-form-item label="排序" prop="sort">

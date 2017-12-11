@@ -8,9 +8,14 @@
                 <el-form-item label="姓名">
                     <el-input size="small" v-model="search_data.name"></el-input>
                 </el-form-item>
+                <el-form-item label="性别">
+                    <el-input size="small" v-model="search_data.sex"></el-input>
+                </el-form-item>
+                <el-form-item label="生日">
+                    <el-input size="small" v-model="search_data.birthday"></el-input>
+                </el-form-item>
                 <el-form-item>
                     <el-button size="small" icon="search" @click='onSearch'>查询</el-button>
-                    <el-button size="small" icon="plus" type="primary" @click='add'>添加患者</el-button>
                 </el-form-item>
             </el-form>
             <el-button type="danger" @click='deletePatient()'>批量删除</el-button>
@@ -45,8 +50,9 @@
                 table_data: {
                     columns: [
                         {"key": "phone", "name": "患者手机号", width: 150},
-                        {"key": "name", "name": "患者姓名", Width: 150},
-                        {"key": "hospital", "name": "患者所属医院", width: 150},
+                        {"key": "name", "name": "患者姓名", width: 150},
+                        {"key": "sex", "name": "性别", width: 150},
+                        {"key": "birthday", "name": "生日"},
                         {"key": "operations", "name": "操作", width: 135}
                     ],
                     data: []
@@ -89,36 +95,6 @@
                     ])
                 }
                 return str;
-            },
-            deletePatient(arr){
-                if(!arr){
-                    if(this.multipleSelection.length){
-                        arr = this.multipleSelection;
-                    }else{
-                        return this.$message("请先选择患者");
-                    }
-                }
-                this.$confirm(`确定要${arr.length>1?'批量删除患者':'删除此患者'}吗？`, '系统提醒', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    ajax.call(this, '/deletePatient', {ids:arr.map(o=>o.id).join(",")}, (d, err) => {
-                        !err && this.ajaxData();
-                    })
-                }).catch(() => {});
-            },
-            passedPatient(arr){
-                ajax.call(this, '/passedPatient', {ids:arr.map(o=>o.id).join(",")}, (obj, err) => {
-                    if (!err) {
-                        arr.forEach(row=>{
-                            row.passed = obj.passed;
-                        })
-                    }
-                });
-            },
-            add(){
-                this.$router.push('/patient/add');
             },
             handleSelectionChange(val){
                 this.multipleSelection = val;

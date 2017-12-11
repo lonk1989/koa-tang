@@ -9,6 +9,7 @@ import Department from 'page/BaseInfo/department.vue'
 import Hospital from 'page/BaseInfo/hospital.vue'
 import Sickness from 'page/BaseInfo/sickness.vue'
 import Medicine from 'page/BaseInfo/medicine.vue'
+import MedicineType from 'page/BaseInfo/medicine-type.vue'
 import UpFileList from 'page/UpFile/list.vue'
 import userList from 'page/User/list.vue'
 import userAdd from 'page/User/add.vue'
@@ -122,6 +123,14 @@ export default {
                     icon:'fa fa-clone'
                 },
                 component: Medicine
+            },{
+                path: 'medicine-type',
+                meta:{
+                    verify:true,
+                    title:'药品分类',
+                    icon:'fa fa-clone'
+                },
+                component: MedicineType
             }]
         },{
             path: '/user',
