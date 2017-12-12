@@ -5,8 +5,8 @@
                 <el-input v-model="data.name"></el-input>
             </el-form-item>
             <el-form-item label="医生所属医院" prop="hospital_id">
-                <el-select v-model="data.hospital_id" ref="select"
-                           style="width: 100%">
+                <el-select v-model="data.hospital_id" ref="select" @change="changeHospital"
+                           style="width: 100%" >
                     <el-option v-for="(item,key) in hospital_data" :key="key" :label="item" :value="key">
                     </el-option>
                 </el-select>
@@ -80,6 +80,7 @@
                     name: '',
                     sex: 0,
                     phone: '',
+                    hospital:'',
                     hospital_id:'',
                     price:'',
                     consult_price:'',
@@ -149,6 +150,9 @@
             },
             backList(){
                 this.$router.push('/article/list');
+            },
+            changeHospital(data){
+                this.data.hospital = this.hospital_data[data]
             },
             successUploadAvatar(data){
                 this.data.avatar = data.filename;

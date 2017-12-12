@@ -148,3 +148,47 @@ POST /api/listMedicine 12ms
 POST /api/listDepartment 5ms 
 POST /api/listSickness 7ms 
 POST /api/listMedicineType 3ms 
+POST /api/login 104ms 
+POST /api/listSort 5ms 
+POST /api/listArticle 10ms 
+server errorReferenceError: err is not defined
+{"request":{"method":"POST","url":"/api/updateDoctor","header":{"cookie":"_ga=GA1.1.423063037.1508671335","accept-language":"zh-CN,zh;q=0.8","accept-encoding":"gzip, deflate, br","referer":"http://localhost:3000/doctor/add","content-type":"application/x-www-form-urlencoded; charset=UTF-8","authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpcCI6IjEyNy4wLjAuMSIsImlkIjoxLCJ1c2VyX25hbWUiOiJhZG1pbiIsInVzZXJfdHlwZSI6MSwidXNlcl9lbWFpbCI6ImxvbmsxOTg5QDEyNi5jb20iLCJjcmVhdGVfdGltZSI6IjIwMTctMTEtMjJUMTg6MTg6MjguMDAwWiIsImxvZ2luX2lwIjoiMTI3LjAuMC4xIiwidXBkYXRlX3RpbWUiOiIyMDE3LTEyLTEwVDExOjMyOjAyLjAwMFoiLCJ1c2VyX3BpYyI6IiIsInVzZXJfZXh0ZW5kIjpudWxsLCJpYXQiOjE1MTMwNDI5NjYsImV4cCI6MTUxMzA1MDE2Nn0.YnlpLN5nEfGJD1aJLQiR3RCc0ypy7HUuujYTwhpqCo8","user-agent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36","origin":"http://localhost:3000","accept":"application/json, text/plain, */*","content-length":"541","connection":"close","host":"localhost:3001"}},"response":{"status":404,"message":"Not Found","header":{}},"app":{"subdomainOffset":2,"proxy":false,"env":"development"},"originalUrl":"/api/updateDoctor","req":"<original node req>","res":"<original node res>","socket":"<original node socket>"}
+POST /api/listHospital 4ms 
+POST /api/listDoctor 13ms 
+POST /api/listDoctor 4ms 
+POST /api/listHospital 4ms 
+POST /api/upFile 16ms 
+POST /api/upFile 6ms 
+POST /api/upFile 7ms 
+POST /api/upFile 7ms 
+server errorError: Data too long for column 'sex' at row 1
+{"request":{"method":"POST","url":"/api/updateDoctor","header":{"cookie":"_ga=GA1.1.423063037.1508671335","accept-language":"zh-CN,zh;q=0.8","accept-encoding":"gzip, deflate, br","referer":"http://localhost:3000/doctor/add","content-type":"application/x-www-form-urlencoded; charset=UTF-8","authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpcCI6IjEyNy4wLjAuMSIsImlkIjoxLCJ1c2VyX25hbWUiOiJhZG1pbiIsInVzZXJfdHlwZSI6MSwidXNlcl9lbWFpbCI6ImxvbmsxOTg5QDEyNi5jb20iLCJjcmVhdGVfdGltZSI6IjIwMTctMTEtMjJUMTg6MTg6MjguMDAwWiIsImxvZ2luX2lwIjoiMTI3LjAuMC4xIiwidXBkYXRlX3RpbWUiOiIyMDE3LTEyLTEwVDExOjMyOjAyLjAwMFoiLCJ1c2VyX3BpYyI6IiIsInVzZXJfZXh0ZW5kIjpudWxsLCJpYXQiOjE1MTMwNDI5NjYsImV4cCI6MTUxMzA1MDE2Nn0.YnlpLN5nEfGJD1aJLQiR3RCc0ypy7HUuujYTwhpqCo8","user-agent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36","origin":"http://localhost:3000","accept":"application/json, text/plain, */*","content-length":"602","connection":"close","host":"localhost:3001"}},"response":{"status":404,"message":"Not Found","header":{}},"app":{"subdomainOffset":2,"proxy":false,"env":"development"},"originalUrl":"/api/updateDoctor","req":"<original node req>","res":"<original node res>","socket":"<original node socket>"}
+POST /api/listHospital 15ms 
+POST /api/listHospital 4ms 
+POST /api/upFile 19ms 
+POST /api/upFile 8ms 
+POST /api/upFile 8ms 
+server errorError: Data too long for column 'sex' at row 1
+{"request":{"method":"POST","url":"/api/updateDoctor","header":{"cookie":"_ga=GA1.1.423063037.1508671335","accept-language":"zh-CN,zh;q=0.8","accept-encoding":"gzip, deflate, br","referer":"http://localhost:3000/doctor/add","content-type":"application/x-www-form-urlencoded; charset=UTF-8","authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpcCI6IjEyNy4wLjAuMSIsImlkIjoxLCJ1c2VyX25hbWUiOiJhZG1pbiIsInVzZXJfdHlwZSI6MSwidXNlcl9lbWFpbCI6ImxvbmsxOTg5QDEyNi5jb20iLCJjcmVhdGVfdGltZSI6IjIwMTctMTEtMjJUMTg6MTg6MjguMDAwWiIsImxvZ2luX2lwIjoiMTI3LjAuMC4xIiwidXBkYXRlX3RpbWUiOiIyMDE3LTEyLTEwVDExOjMyOjAyLjAwMFoiLCJ1c2VyX3BpYyI6IiIsInVzZXJfZXh0ZW5kIjpudWxsLCJpYXQiOjE1MTMwNDI5NjYsImV4cCI6MTUxMzA1MDE2Nn0.YnlpLN5nEfGJD1aJLQiR3RCc0ypy7HUuujYTwhpqCo8","user-agent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36","origin":"http://localhost:3000","accept":"application/json, text/plain, */*","content-length":"498","connection":"close","host":"localhost:3001"}},"response":{"status":404,"message":"Not Found","header":{}},"app":{"subdomainOffset":2,"proxy":false,"env":"development"},"originalUrl":"/api/updateDoctor","req":"<original node req>","res":"<original node res>","socket":"<original node socket>"}
+POST /api/listMedicineType 7ms 
+POST /api/listMedicine 6ms 
+POST /api/listHospital 3ms 
+POST /api/listHospital 4ms 
+POST /api/updateDoctor 8ms 
+POST /api/listDoctor 5ms 
+POST /api/listHospital 4ms 
+POST /api/getDoctorById 3ms 
+server errorError: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1=? where id=?' at line 1
+{"request":{"method":"POST","url":"/api/updateDoctor","header":{"cookie":"_ga=GA1.1.423063037.1508671335","accept-language":"zh-CN,zh;q=0.8","accept-encoding":"gzip, deflate, br","referer":"http://localhost:3000/doctor/edit/1","content-type":"application/x-www-form-urlencoded; charset=UTF-8","authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpcCI6IjEyNy4wLjAuMSIsImlkIjoxLCJ1c2VyX25hbWUiOiJhZG1pbiIsInVzZXJfdHlwZSI6MSwidXNlcl9lbWFpbCI6ImxvbmsxOTg5QDEyNi5jb20iLCJjcmVhdGVfdGltZSI6IjIwMTctMTEtMjJUMTg6MTg6MjguMDAwWiIsImxvZ2luX2lwIjoiMTI3LjAuMC4xIiwidXBkYXRlX3RpbWUiOiIyMDE3LTEyLTEwVDExOjMyOjAyLjAwMFoiLCJ1c2VyX3BpYyI6IiIsInVzZXJfZXh0ZW5kIjpudWxsLCJpYXQiOjE1MTMwNDI5NjYsImV4cCI6MTUxMzA1MDE2Nn0.YnlpLN5nEfGJD1aJLQiR3RCc0ypy7HUuujYTwhpqCo8","user-agent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36","origin":"http://localhost:3000","accept":"application/json, text/plain, */*","content-length":"183","connection":"close","host":"localhost:3001"}},"response":{"status":404,"message":"Not Found","header":{}},"app":{"subdomainOffset":2,"proxy":false,"env":"development"},"originalUrl":"/api/updateDoctor","req":"<original node req>","res":"<original node res>","socket":"<original node socket>"}
+POST /api/listDoctor 3ms 
+POST /api/listDoctor 19ms 
+POST /api/listHospital 5ms 
+POST /api/listHospital 3ms 
+POST /api/listHospital 3ms 
+POST /api/listHospital 3ms 
+POST /api/listHospital 5ms 
+POST /api/listHospital 3ms 
+POST /api/updateDoctor 8ms 
+POST /api/listDoctor 4ms 
+POST /api/listHospital 3ms 
+POST /api/getDoctorById 4ms 

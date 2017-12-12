@@ -576,6 +576,7 @@ async function updateDoctor(ctx) {
         phone:'医生电话',
         sex:'',
         hospital_id:'',
+        hospital:'',
         avatar:'',
         rank:'',
         price:'',
@@ -593,24 +594,24 @@ async function updateDoctor(ctx) {
         }
         arr.push(data[key]);
     });
-    if(!err){
+    if(!msg){
         const user = ctx.state.userInfo;//获取用户信息
         const connection = await mysql.createConnection(config.mysqlDB);
         if(data.id > 0){
             //编辑文章
             array.push(data.id);
             const [result] = await connection.execute(`UPDATE doctor SET ${array.map(k=>k+'=?').join(',')} where id=?`, arr);
-            err = result.affectedRows === 1 ? '' :'医生修改失败';
+            msg = result.affectedRows === 1 ? '' :'医生修改失败';
         }else{
             //添加医生
             const [result] = await connection.execute(`INSERT INTO doctor (${array.join(',')}) VALUES (${array.map((()=>'?')).join(',')})`, arr);
-            err = result.affectedRows === 1 ? '' :'医生添加失败';
+            msg = result.affectedRows === 1 ? '' :'医生添加失败';
         }
         await connection.end();
     }
     ctx.body = {
-        success: !err,
-        message: err,
+        success: !msg,
+        message: msg,
         data: {}
     }
 }
