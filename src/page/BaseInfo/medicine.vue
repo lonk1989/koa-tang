@@ -105,7 +105,6 @@
                     arr.map((o,i) => {
                         obj[o.id.toString()] = o.name
                     })
-                    console.log(obj)
                     this.medicine_type_data = obj;
                 }
             })

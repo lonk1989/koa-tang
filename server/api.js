@@ -552,6 +552,90 @@ async function listDoctor(ctx) {
     };
 }
 
+async function getDoctorById(ctx) {
+    const data = ctx.request.body;
+    let id = data.id >> 0;
+    let msg;
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [list] = await connection.execute("SELECT * FROM doctor where id=?", [id]);
+    const obj = list[0];
+    await connection.end();
+    ctx.body = {
+        success: !msg,
+        message: msg,
+        data: !msg ? obj : {}
+    }
+}
+
+//新添或编辑医生
+async function updateDoctor(ctx) {
+    const data = ctx.request.body;
+    let msg,arr = [];
+    const obj = {
+        name:'医生姓名',
+        phone:'医生电话',
+        sex:'',
+        hospital_id:'',
+        avatar:'',
+        rank:'',
+        price:'',
+        consult_price:'',
+        notice:'',
+        adept:'',
+        about:'',
+        intro:'',
+        sort:''
+    };
+    const array = Object.getOwnPropertyNames(obj);
+    array.forEach(key=>{
+        if(obj[key]!=='' && data[key]==='' &&!msg){
+            msg = obj[key]+'不能为空！';
+        }
+        arr.push(data[key]);
+    });
+    if(!err){
+        const user = ctx.state.userInfo;//获取用户信息
+        const connection = await mysql.createConnection(config.mysqlDB);
+        if(data.id > 0){
+            //编辑文章
+            array.push(data.id);
+            const [result] = await connection.execute(`UPDATE doctor SET ${array.map(k=>k+'=?').join(',')} where id=?`, arr);
+            err = result.affectedRows === 1 ? '' :'医生修改失败';
+        }else{
+            //添加医生
+            const [result] = await connection.execute(`INSERT INTO doctor (${array.join(',')}) VALUES (${array.map((()=>'?')).join(',')})`, arr);
+            err = result.affectedRows === 1 ? '' :'医生添加失败';
+        }
+        await connection.end();
+    }
+    ctx.body = {
+        success: !err,
+        message: err,
+        data: {}
+    }
+}
+
+async function deleteDoctor(ctx){
+    const data = ctx.request.body;
+    let ids = data.ids;
+    let msg;
+    if(/^\d+(,\d+)*$/.test(ids)){
+        const arr = ids.split(',');
+        let sql = `DELETE from doctor where id in (${arr.map(() => '?').join(',')})`;
+        const connection = await mysql.createConnection(config.mysqlDB);
+        const [result] = await connection.execute(sql, arr);
+        msg = result.affectedRows > 0 ? '':'删除医生失败！';
+        await connection.end();
+    }else{
+        msg = 'ID参数不合法';
+    }
+    ctx.body = {
+        success: !msg,
+        message: msg,
+        data: {}
+    }
+}
+
 //患者列表
 async function listPatient(ctx) {
     let data = ctx.request.body;
@@ -1366,6 +1450,9 @@ export default {
     batchDelSort,
     listUser,
     listDoctor,
+    updateDoctor,
+    deleteDoctor,
+    getDoctorById,
     listPatient,
     passedUser,
     deleteUser,
