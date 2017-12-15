@@ -82,8 +82,8 @@
                     phone: '',
                     hospital:'',
                     hospital_id:'',
-                    price:'',
-                    consult_price:'',
+                    price:'0',
+                    consult_price:'0',
                     avatar: '',
                     rank:0,
                     notice:'',
@@ -99,6 +99,12 @@
                     }],
                     phone:[{
                         required: true, message: '手机号不能为空', trigger: 'change'
+                    }],
+                    price:[{
+                        required: true, message: '问诊价格不能为空', trigger: 'change'
+                    }],
+                    consult_price:[{
+                        required: true, message: '复诊价格不能为空', trigger: 'change'
                     }]
                 },
                 defaultProps: {

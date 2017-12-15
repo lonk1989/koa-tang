@@ -651,7 +651,7 @@ async function listPatient(ctx) {
         arr.push('%' + data.phone + '%');
     }
     const connection = await mysql.createConnection(config.mysqlDB);
-    const [list] = await connection.execute("SELECT * FROM `doctor`"+querying.replace('and','where'), arr);
+    const [list] = await connection.execute("SELECT * FROM `patient`"+querying.replace('and','where'), arr);
     await connection.end();
     list.forEach(obj=>{
         obj.phone = '****'+obj.phone.slice(4);//过滤手机号码
