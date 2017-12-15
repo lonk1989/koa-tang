@@ -599,7 +599,7 @@ async function updateDoctor(ctx) {
         const connection = await mysql.createConnection(config.mysqlDB);
         if(data.id > 0){
             //编辑文章
-            array.push(data.id);
+            arr.push(data.id);
             const [result] = await connection.execute(`UPDATE doctor SET ${array.map(k=>k+'=?').join(',')} where id=?`, arr);
             msg = result.affectedRows === 1 ? '' :'医生修改失败';
         }else{
