@@ -406,18 +406,34 @@ async function batchDelSickness(ctx) {
 //药品列表
 async function listMedicine(ctx) {
     let data = ctx.request.body;
+    let pageSize = Math.abs(data.pageSize >> 0)||10;//分页率
+    let page = Math.abs(data.page >> 0)||1;//当前页码
     const arr = [];
     let querying = '';
     if(data.name){
-        querying += " and name like ?";
+        querying += " and `name` like ?";
         arr.push('%' + data.name + '%');
     }
+    if(data.medicine_type_id){
+        querying += ' and `medicine_type_id`=?';
+        arr.push(data.medicine_type_id);
+    }
     const connection = await mysql.createConnection(config.mysqlDB);
-    const [list] = await connection.execute("SELECT * FROM `medicine` order by `sort`"+querying.replace('and','where'), arr);
+    const [rows] = await connection.execute("SELECT SQL_NO_CACHE COUNT(*) as total FROM `medicine`"+querying.replace('and','where'), arr);
+    const total = rows[0].total;//总数量
+    const pages = Math.ceil(total/pageSize);
+    querying += ' order by ?'
+    arr.push('`sort`')
+    if(page > pages){
+        page = Math.max(1,pages);//以防没数据
+    }
+    querying += " LIMIT ?, ?";
+    arr.push((page - 1) * pageSize,pageSize);
+    const [list] = await connection.execute("SELECT * FROM `medicine`"+querying.replace('and','where'), arr);
     await connection.end();
     ctx.body = {
         success: true,
-        data:{data:list}
+        data:{page,total,data:list}
     };
 }
 //保存药品

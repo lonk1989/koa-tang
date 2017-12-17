@@ -27,10 +27,10 @@
                 <el-input v-model="data.avatar"></el-input> <up-file ref="uploadAvatar" :upload="{}" @successUpload="successUploadAvatar"></up-file> <el-button @click="upImgAvatar">上传头像</el-button>
             </el-form-item>
             <el-form-item label="问诊价格" prop="price">
-                <el-input v-model="data.price"></el-input>
+                <el-input type="number" v-model="data.price"></el-input>
             </el-form-item>
             <el-form-item label="复诊价格" prop="consult_price">
-                <el-input v-model="data.consult_price"></el-input>
+                <el-input type="number" v-model="data.consult_price"></el-input>
             </el-form-item>
             <el-form-item label="医生公告" prop="notice">
                 <el-input type="textarea" v-model="data.notice"></el-input>
@@ -82,8 +82,8 @@
                     phone: '',
                     hospital:'',
                     hospital_id:'',
-                    price:'0',
-                    consult_price:'0',
+                    price:0.00,
+                    consult_price:0.00,
                     avatar: '',
                     rank:0,
                     notice:'',

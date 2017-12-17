@@ -1,26 +1,44 @@
 <template>
     <div>
-        <el-row :gutter="20">
-            <el-col :span="8">
-                <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
-            </el-col>
-            <el-col :span="16" class="button-tree">
-                <el-button type="success" @click="add">新增</el-button>
-                <el-button type="danger" @click="batchDelete">批量删除</el-button>
-            </el-col>
+        <el-row class="grid-table">
+            <el-form :inline="true" :model='search_data'>
+                <el-form-item label="药品名称">
+                    <el-input size="small" v-model="search_data.name"></el-input>
+                </el-form-item>
+                <el-form-item label="药品分类">
+                    <el-select size="small" v-model="search_data.medicine_type_id">
+                        <el-option label="全部" value=""></el-option>
+                        <el-option v-for="(item,key) in medicine_type_data" :key="key"
+                                   :label="item" :value="key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button size="small" icon="search" @click='onSearch'>查询</el-button>
+                    <el-button size="small" icon="plus" type="primary" @click='add'>添加</el-button>
+                </el-form-item>
+            </el-form>
+            <el-button type="danger" @click='deleteMedicine()'>批量删除</el-button>
+            <el-table stripe border style="width:100%;margin-top:10px" :data="table_data.data" @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="55"></el-table-column>
+                <el-table-column
+                    show-overflow-tooltip
+                    v-for="item in table_data.columns"
+                    :label="item.name"
+                    :key="item.key"
+                    :prop="item.key"
+                    :formatter="columnFormatter"
+                    :min-width="item.minWidth" :width="item.width">
+                </el-table-column>
+            </el-table>
+            <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page="search_data.page"
+                :page-size="search_data.pageSize"
+                layout="total, prev, pager, next,jumper"
+                :total="table_data.total">
+            </el-pagination>
         </el-row>
-        <el-tree
-            class="filter-tree"
-            :data="data"
-            node-key="id"
-            :props="defaultProps"
-            default-expand-all
-            :show-checkbox="true"
-            :expand-on-click-node="false"
-            :filter-node-method="filterNode"
-            :render-content="renderContent"
-            ref="tree">
-        </el-tree>
         <el-dialog :title="getTitle" :visible.sync="visible" size="tiny">
             <el-form :model="form" :rules="rules" label-width="80px" ref="form">
                 <el-form-item label="名称" prop="name">
@@ -57,18 +75,19 @@
     import {ajax,storage} from 'utils';
     import common from 'common';
     module.exports = {
-        name: 'Medicine',
+        name: 'list',
         data() {
             return {
-                page_grade:common.page_grade,
-                grade:{
+                search_data: {
+                    name: '',
+                    medicine_type_id: '',
+                    page: 1,
+                    pageSize: 10
                 },
-                type: 'edit',
-                visible: false,
-                loading: false,
-                filterText: '',
                 parent_data: null,
+                loading: false,
                 medicine_type_data: [],
+                multipleSelection:[],
                 form: {
                     id: 0,
                     name: '',
@@ -84,67 +103,86 @@
                     unit: {required: true, trigger: 'change'},
                     price: {required: true, trigger: 'change'}
                 },
-                data: [],
-                defaultProps: {
-                    disabled: 'disabled',
-                    label: 'name',
-                    value: 'id'
+                type: 'edit',
+                visible: false,
+                table_data: {
+                    columns: [
+                        {"key": "name", "name": "药品名称", width: 150},
+                        {"key": "medicine_type_id", "name": "药品分类", width: 150},
+                        {"key": "unit", "name": "单位", width: 150},
+                        {"key": "price", "name": "价格", width: 150},
+                        {"key": "spec", "name": "规格"},
+                        {"key": "operations", "name": "操作", width: 135}
+                    ],
+                    data: []
                 }
-            }
-        },
-        computed: {
-            getTitle(){
-                return this.type === 'edit' ? '编辑' : '添加';
-            }
-        },
-        mounted(){
-            ajax.call(this, '/listMedicineType', {}, (data, err) => {
-                if (!err) {
-                    let arr = data.data;
-                    let obj = {}
-                    arr.map((o,i) => {
-                        obj[o.id.toString()] = o.name
-                    })
-                    this.medicine_type_data = obj;
-                }
-            })
-
-            ajax.call(this, '/listMedicine', {}, (data, err) => {
-                if (!err) {
-                    this.data = data.data;
-                }
-            })
-        },
-        watch: {
-            filterText(val) {
-                this.$refs.tree.filter(val);
             }
         },
         methods: {
-            batchDelete(){
-                let v = this.$refs.tree.getCheckedKeys();
-                if(v.length){
-                    this.$confirm('确定要删除吗！', '系统提醒', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        ajax.call(this, '/batchDelMedicine', {ids:v.join(',')}, (d, err) => {
-                            if (!err) {
-                                let a = (obj)=>{
-                                    let c = 0
-                                    for(let i = 0; i < obj.length; i++) {
-                                        v.includes(obj[i].id)&&obj.splice(i--,1);
-                                    }
-                                };
-                                a(this.data);
-                                this.$refs.tree.setCheckedKeys([]);
-                            }
-                        })
-                    }).catch(() => {});
-                }else{
-                    this.$message('请先选择数据！');
+            ajaxData(){
+                ajax.call(this, '/listMedicine', this.search_data, (obj, err) => {
+                    if (!err) {
+                        this.table_data.data = obj.data;
+                        this.table_data.total = obj.total;
+                        this.search_data.page = obj.page;
+                    }
+                });
+            },
+            onSearch() {
+                this.ajaxData();
+            },
+            handleCurrentChange(page){
+                if(page !== this.search_data.page){
+                    this.search_data.page = page;
+                    this.ajaxData();
                 }
+            },
+            createButton(h, row, code, text){
+                let self = this;
+                let dis = false;
+                return h('el-button', {
+                    props: {size: 'small',disabled:dis},
+                    on: {
+                        click(){
+                            self.healColumnClick(code, row)
+                        }
+                    }
+                },[text])
+            },
+            columnFormatter(row, column){
+                let key = column.property;
+                let str = row[key]+'';
+                let h = this.$createElement;
+                if (str==='null') str = ''
+                if (key === 'medicine_type_id') {
+                    str = this.medicine_type_data[str]
+                }else if(key === 'create_time'){
+                    str = str.replace(/[^-\d].+/,'');
+                }else if(key === 'operations'){
+                    return h('div',[
+                        this.createButton(h,row,'edit','编辑'),
+                        this.createButton(h,row,'delete','删除'),
+                    ])
+                }
+                return str;
+            },
+            deleteMedicine(arr){
+                if(!arr){
+                    if(this.multipleSelection.length){
+                        arr = this.multipleSelection;
+                    }else{
+                        return this.$message("请先选择药品");
+                    }
+                }
+                this.$confirm(`确定要${arr.length>1?'批量删除药品':'删除此药品'}吗？`, '系统提醒', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    ajax.call(this, '/deleteMedicine', {ids:arr.map(o=>o.id).join(",")}, (d, err) => {
+                        !err && this.ajaxData();
+                    })
+                }).catch(() => {});
             },
             save(){
                 this.$refs.form.validate(v => {
@@ -180,74 +218,68 @@
                 this.visible = true;
                 this.type = 'add';
             },
-            filterNode(value, data) {
-                if (!value) return true;
-                return data.name.indexOf(value) !== -1;
+            handleSelectionChange(val){
+                this.multipleSelection = val;
             },
-            headleClick(icon, data, store){
-                if (icon === 'delete') {
-                    this.$confirm('确定要删除吗？', '系统提醒', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        ajax.call(this, '/deleteMedicine', {id: data.id}, (d, err) => {
-                            if (!err) {
-                                store.remove(data);
-                            }
-                        })
-                    }).catch(() => {
-                    });
-                } else if (icon === 'plus' || icon === 'edit') {
+            healColumnClick(code, row){
+                console.log(row)
+                if(code ==='edit'){
                     this.$refs.form && this.$refs.form.resetFields();
-                    this.type = icon;
-                    const f = this.form;
-                    if (icon === 'plus') {
-                        for (let key in this.form) {
-                            this.form[key] = key === 'id' ? 0 : '';
-                        }
-                    }else{
-                        for (let key in this.form) {
-                            this.form[key] = data[key];
-                        }
+                    this.type = 'edit';
+                    for (let key in this.form) {
+                        this.form[key] = row[key];
                     }
-                    this.parent_data = data;
+                    this.parent_data = row;
                     this.visible = true;
+                }else if(code === 'delete'){
+                    this.deleteMedicine([row]);
                 }
             },
-            renderContent(h, {node, data, store}) {
-                let but = (type, icon) => {
-                    return h('el-button', {
-                        props: {size: "small", type, icon,disabled:false}, on: {
-                            click: () => {
-                                this.headleClick(icon, data, store);
-                            }
-                        }
-                    })
-                };
-                return h('span',[h('span', [h('span'), [node.label, h('span', {style: {color: '#999',marginLeft: '10px'}}, node.data.price + '元')]]),h('span', {style: {float: 'right',margin: '-2px 10px'}}, [but('warning', 'edit'), but('danger', 'delete')])]);
+        },
+        computed: {
+            getTitle(){
+                return this.type === 'edit' ? '编辑' : '添加';
             }
         },
-        mixins:[common.mixin],
+        mounted() {
+            this.ajaxData();
+            ajax.call(this, '/listMedicineType', {}, (data, err) => {
+                if (!err) {
+                    let arr = data.data
+                    let obj = {}
+                    arr.map((o,i) => {
+                        obj[o.id.toString()] = o.name
+                    })
+                    this.medicine_type_data = obj
+                }
+            });
+        },
+        mixins:[common.mixin]
     }
 </script>
 <style lang="less">
-    .filter-tree {
-        margin-top: 10px;
-        border-radius: 5px;
-        .el-cascader{width:100%}
-        .el-tree-node__content>.el-checkbox{
-            height:40px;
+    .grid-table{
+        .el-form-item{
+            display: inline-block;
+            max-height:240px;
+            width:~'calc(24% - 10px)';
+            &:first-child{
+                .el-input{
+                    margin-right:25px;
+                }
+            }
+            &:last-child{
+                overflow: hidden;
+                white-space: nowrap;
+                vertical-align: bottom;
+            }
         }
-        .el-tree-node__content {
-            border-bottom: 1px dashed #ddd;
-            white-space: normal;
+        .el-pagination{
+            margin-top:5px;
+            text-align: right;
         }
-    }
-    .button-tree {
-        text-align: right;
-        button {
-            margin-left: 10px
+        .el-cascader--small .el-cascader__label{
+            line-height: 40px;
         }
     }
 </style>
