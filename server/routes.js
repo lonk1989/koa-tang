@@ -59,6 +59,9 @@ const urls = {
     'passedArticle': {},
     'deleteArticle': {},
     'getArticleById': {userType: 0},//获取文章详情
+    'patientRegister': {userType: 0},  //患者注册（游客）
+    'patientLogin': {userType: 0},  //患者登录（游客）
+    'patientReloadToken': {},  //患者登录（游客）
 };
 
 Object.getOwnPropertyNames(urls).forEach(key=>{

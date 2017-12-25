@@ -678,11 +678,11 @@ async function listPatient(ctx) {
     };
 }
 
-async function regPatient(ctx) {
+async function patientRegister(ctx) {
     let data = ctx.request.body
     let msg,arr = [];
     const obj = {
-        username:'用户名',
+        phone:'用户名',
         password:'用户密码'
     };
     const array = Object.getOwnPropertyNames(obj);
@@ -699,7 +699,7 @@ async function regPatient(ctx) {
         arr.push(new Date().toLocaleString());
         arr[1] = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));//加密密码
         //先检查是否占用帐号
-        const [rows] = await connection.execute('SELECT phone FROM `patient` where `username`=?', [data.username]);
+        const [rows] = await connection.execute('SELECT phone FROM `patient` where `phone`=?', [data.phone]);
         if(rows.length > 0) {
             msg = '该手机号已经注册了';
         }else{
@@ -918,6 +918,67 @@ async function active(ctx) {
     }
     ctx.redirect(common.web_domain + '/Login?active=' + code);
 }
+
+//患者登录
+async function patientLogin(ctx) {
+    const data = ctx.request.body;
+    let msg;
+    //初步验证通过，开始查询数据库
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [rows] = await connection.execute('SELECT * FROM `patient` where `phone`=?', [data.phone]);
+    msg = '用户名或密码错误！';//不应该具体透露是密码还是帐户出错！
+    if (rows.length) {
+        const userInfo = rows[0];
+        if (bcrypt.compareSync(data.password, userInfo.password)) {
+            let ip = config.getClientIP(ctx);
+            await connection.execute('UPDATE `patient` SET `login_ip`=? where `id`=?', [ip, userInfo.id]);
+            delete userInfo.password;
+            return ctx.body = {
+                success: true,
+                data: {
+                    userInfo,
+                    token: jwt.sign(Object.assign({ip}, userInfo),
+                        config.JWTs.secret, {expiresIn: config.JWTs.expiresIn})
+                }
+            }
+        }
+    }
+    await connection.end();
+    ctx.body = {
+        success: false,
+        message: msg,
+        data: {}
+    };
+}
+
+//患者重新获取token
+async function patientReloadToken(ctx) {
+    const data = ctx.request.body;
+    let msg;
+    //初步验证通过，开始查询数据库
+    const connection = await mysql.createConnection(config.mysqlDB);
+    let userInfo = ctx.state.userInfo
+    delete userInfo.exp;
+    delete userInfo.iat;
+   
+    let ip = config.getClientIP(ctx);
+    await connection.execute('UPDATE `patient` SET `login_ip`=? where `id`=?', [ip, userInfo.id]);
+    return ctx.body = {
+        success: true,
+        data: {
+            userInfo: userInfo,
+            token: jwt.sign(Object.assign({ip}, userInfo),
+                config.JWTs.secret, {expiresIn: config.JWTs.expiresIn})
+        }
+    }
+    await connection.end();
+    ctx.body = {
+        success: false,
+        message: msg,
+        data: {}
+    };
+}
+
 
 //用户登录
 async function login(ctx) {
@@ -1475,5 +1536,8 @@ export default {
     deleteUser,
     getUserById,
     upUserPic,
-    updateUser
+    updateUser,
+    patientRegister,
+    patientLogin,
+    patientReloadToken
 }

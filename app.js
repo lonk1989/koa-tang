@@ -3,7 +3,7 @@ import Koa from 'koa';
 import koa_router from "koa-router";
 import json from 'koa-json';
 import logger from 'koa-logger';
-
+import cors from 'koa-cors';
 import path from 'path';
 import serve from 'koa-static';
 import historyApiFallback from 'koa2-history-api-fallback';
@@ -13,7 +13,7 @@ import routes_obj from './server/routes.js';
 
 const app = new Koa();
 const router = koa_router();
-
+app.use(cors());
 app.use(koa_bodyparser());
 app.use(json());
 app.use(logger());
