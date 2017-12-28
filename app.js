@@ -6,6 +6,7 @@ import logger from 'koa-logger';
 import cors from 'koa-cors';
 import path from 'path';
 import serve from 'koa-static';
+import staticCache from 'koa-static-cache';
 import historyApiFallback from 'koa2-history-api-fallback';
 
 import koa_bodyparser from "koa-bodyparser";
@@ -57,6 +58,9 @@ router.use('/api', routes_obj.routes.routes());
 app.use(router.routes()); // 将路由规则挂载到Koa上。
 app.use(historyApiFallback());
 app.use(serve(path.resolve('dist'))); // 将webpack打包好的项目目录作为Koa静态文件服务的目录
+app.use(staticCache(path.join(__dirname, 'dist'), {
+  maxAge: 365 * 24 * 60 * 60
+}))
 
 app.listen(3001, () => {
     console.log('Koa is listening in 3001');
