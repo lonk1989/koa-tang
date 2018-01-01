@@ -17,6 +17,7 @@ import doctorList from 'page/Doctor/list.vue'
 import doctorAdd from 'page/Doctor/add.vue'
 import patientList from 'page/Patient/list.vue'
 import patientAdd from 'page/Patient/add.vue'
+import Settings from 'page/Settings/settings.vue'
 //todo 记录
 /*
 *
@@ -258,6 +259,25 @@ export default {
                     icon:'fa fa-files-o'
                 },
                 component: UpFileList
+            }]
+        },{
+            path: '/settings',
+            meta:{
+                verify:true,
+                title:'系统管理',
+                icon:'fa fa-file-text-o'
+            },
+            component: Home,
+            redirect:'/settings/settings',
+            children: [{
+                path: 'settings',
+                meta:{
+                    verify:true,
+                    grade:4,
+                    title:'系统设置',
+                    icon:'fa fa-clone'
+                },
+                component: Settings
             }]
         }
     ]

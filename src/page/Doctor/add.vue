@@ -179,7 +179,7 @@
                     let arr = data.data;
                     let obj = {}
                     arr.map((o,i) => {
-                        obj[o.id.toString()] = o.name
+                        obj[o.id.toString()] = o.name + o.rank
                     })
                     this.hospital_data = obj;
                     let id = this.$route.params.id;

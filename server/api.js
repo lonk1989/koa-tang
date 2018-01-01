@@ -39,6 +39,53 @@ function sendEmail(email, title, body) {
 }
 
 //科室列表
+async function settings(ctx) {
+    const connection = await mysql.createConnection(config.mysqlDB);
+    const [list] = await connection.execute("SELECT * FROM `settings`");
+    await connection.end();
+    ctx.body = {
+        success: true,
+        data:list.length == 0 ? {id: 0}: list[0]
+    };
+}
+//保存科室
+async function updateSettings(ctx) {
+    let data = ctx.request.body;
+    let msg,arr = [];
+    const obj = {
+        tel:'客服电话'
+    };
+    const array = Object.getOwnPropertyNames(obj);
+    array.forEach(key=>{
+        if(obj[key]!=='' && data[key]==='' &&!msg){
+            msg = obj[key]+'不能为空！';
+        }
+        arr.push(data[key]);
+    });
+    if(!msg){
+        let id = data.id >> 0;
+        const connection = await mysql.createConnection(config.mysqlDB);
+        if(id){
+            arr.push(id);
+            const [result] = await connection.execute(`UPDATE settings SET ${array.map(k=>k+'=?').join(',')} where id=?`, arr);
+            msg = result.affectedRows === 1 ? '' : '修改失败';
+        }else{
+            const [result] = await connection.execute(`INSERT INTO settings (${array.join(',')}) VALUES (${array.map((()=>'?')).join(',')})`, arr);
+            msg = result.affectedRows === 1 ? '' : '添加失败';
+            data.id = result.insertId
+        }
+        await connection.end();
+    }
+    ctx.body = {
+        success: !msg,
+        message: msg,
+        data: {
+            data
+        }
+    }
+}
+
+//科室列表
 async function listDepartment(ctx) {
     let data = ctx.request.body;
     const arr = [];
@@ -560,6 +607,7 @@ async function listDoctor(ctx) {
     const [list] = await connection.execute("SELECT * FROM `doctor`"+querying.replace('and','where'), arr);
     await connection.end();
     list.forEach(obj=>{
+        // obj.price = obj.price.toString().replace(/^[0]+/, '')
         obj.phone = '****'+obj.phone.slice(4);//过滤手机号码
     });
     ctx.body = {
@@ -1539,5 +1587,7 @@ export default {
     updateUser,
     patientRegister,
     patientLogin,
-    patientReloadToken
+    patientReloadToken,
+    settings,
+    updateSettings
 }

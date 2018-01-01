@@ -61,6 +61,8 @@ const urls = {
     'getArticleById': {userType: 0},//获取文章详情
     'patientRegister': {userType: 0},  //患者注册（游客）
     'patientLogin': {userType: 0},  //患者登录（游客）
+    'settings': {},
+    'updateSettings': {},
     'patientReloadToken': {},  
 };
 
